@@ -1,66 +1,136 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Gestión de Estudiantes (Laravel)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Proyecto CRUD para gestionar Estudiantes y Carreras con Laravel, Blade y TailwindCSS.
+En una sola pantalla puedes registrar estudiantes mediante un formulario y ver, al mismo tiempo, una tabla con los estudiantes dados de alta (con paginación). Incluye validaciones, relaciones Eloquent y eliminación segura.
 
-## About Laravel
+Autor: Erik Cervantes
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+✨ ¿Qué construimos?
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Módulo Carreras
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Modelo Carrera (id, nombre, timestamps)
 
-## Learning Laravel
+CRUD mínimo: listar, crear rápido desde el index (opcional editar/eliminar)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Módulo Estudiantes
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Modelo Estudiante con relación belongsTo(Carrera)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Campos: nombre, correo, semestre, carrera_id
 
-## Laravel Sponsors
+Vista unificada: formulario + tabla en estudiantes.index
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Validación en servidor (Laravel FormRequest/validate)
 
-### Premium Partners
+Paginación y mensajes de éxito
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+Diseño
 
-## Contributing
+TailwindCSS (con Vite o CDN, según prefieras)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Layout base layouts/app.blade.php
 
-## Code of Conduct
+🧱 Tecnologías
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+PHP 8+, Laravel 10/11
 
-## Security Vulnerabilities
+MySQL/MariaDB
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+TailwindCSS (Vite o CDN)
 
-## License
+Blade, Eloquent ORM
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+📁 Estructura principal
+app/
+  Http/Controllers/
+    EstudianteController.php
+    CarreraController.php
+  Models/
+    Estudiante.php
+    Carrera.php
+resources/
+  views/
+    layouts/app.blade.php
+    estudiantes/index.blade.php
+    carreras/index.blade.php
+database/
+  migrations/
+    create_carreras_table.php
+    create_estudiantes_table.php   // con foreignId('carrera_id')
+
+🗄️ Esquema de BD
+
+carreras
+
+id (PK)
+
+nombre (string, único recomendado)
+
+timestamps
+
+estudiantes
+
+id (PK)
+
+nombre (string)
+
+correo (string)
+
+semestre (tinyInteger 1–12)
+
+carrera_id (FK → carreras.id, cascadeOnDelete)
+
+timestamps
+
+🔗 Relaciones Eloquent
+// app/Models/Estudiante.php
+public function carrera() {
+  return $this->belongsTo(Carrera::class);
+}
+
+// app/Models/Carrera.php
+public function estudiantes() {
+  return $this->hasMany(Estudiante::class);
+}
+
+🚦Rutas clave
+GET  /                 → redirect a estudiantes.index
+GET  /estudiantes      → EstudianteController@index
+POST /estudiantes      → EstudianteController@store
+DELETE /estudiantes/{estudiante} → EstudianteController@destroy
+
+GET  /carreras         → CarreraController@index
+POST /carreras         → CarreraController@store
+
+🧰 Instalación
+
+Clona el repo y entra a la carpeta del proyecto
+
+Copia el env y genera la clave:
+
+cp .env.example .env
+php artisan key:generate
+
+
+Configura tu base de datos en .env
+
+DB_DATABASE=tu_bd
+DB_USERNAME=tu_usuario
+DB_PASSWORD=tu_password
+
+
+Instala dependencias:
+
+composer install
+npm install   # si usarás Vite/Tailwind local
+
+
+Migra la base:
+
+php artisan migrate
+
+
+Arranca el servidor:
+
+php artisan serve
